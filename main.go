@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"bytes"
 	"fmt"
 	"os"
 	"strings"
@@ -18,7 +19,7 @@ func main() {
 		line := scanner.Text()
 
 		line = strings.ToLower(strings.TrimSpace(line))
-		words := strings.Split(line, " ")
+		words := split(line)
 		if len(words) > 0 {
 			err := exec(words[0], words[1:])
 			if err == quitWithoutError {
@@ -32,6 +33,25 @@ func main() {
 			}
 		}
 	}
+}
+
+func split(s string) []string {
+	var result []string
+	var buffer bytes.Buffer
+	for i := 0; i < len(s); i++ {
+		if s[i] == ' ' {
+			if buffer.Len() > 0 {
+				result = append(result, buffer.String())
+				buffer.Reset()
+			}
+		} else {
+			buffer.WriteByte(s[i])
+		}
+	}
+	if buffer.Len() > 0 {
+		result = append(result, buffer.String())
+	}
+	return result
 }
 
 const initText = `交互式 CrossMe 游戏助手
